@@ -11,82 +11,95 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase configuration and initialization
         // *******************************************************************
-        // חשוב! עליך להחליף את placeholder_YOUR_FIREBASE_CONFIG_HERE
-        // עם פרטי התצורה של פרויקט ה-Firebase האישי שלך.
-        // ראה הוראות למטה כיצד למצוא אותם.
-const firebaseConfig = {
-  apiKey: "AIzaSyCzxnDTobC1K8ySwmuJ4e16C5uWvbi85Pg",
-  authDomain: "sapgame-69979.firebaseapp.com",
-  projectId: "sapgame-69979",
-  storageBucket: "sapgame-69979.firebasestorage.app",
-  messagingSenderId: "1013659593256",
-  appId: "1:1013659593256:web:f87e02b548debae767231d",
-  measurementId: "G-ZSMZZZLTEE"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyCzxnDTobC1K8ySwmuJ4e16C5uWvbi85Pg",
+          authDomain: "sapgame-69979.firebaseapp.com",
+          projectId: "sapgame-69979",
+          storageBucket: "sapgame-69979.firebasestorage.app",
+          messagingSenderId: "1013659593256",
+          appId: "1:1013659593256:web:f87e02b548debae767231d",
+          measurementId: "G-ZSMZZZLTEE"
+        };
         const customAppId = "sap-trivia-game-logs"; // לדוגמה, שם ייחודי עבור נתיב הלוגים
         // *******************************************************************
 
         let app;
         let db;
         let auth;
-        let userId = 'anonymous'; // Default to anonymous until authenticated
+        let currentUserId = 'loading...';
         let isAuthReady = false;
 
-        // Initialize Firebase app and services
-        try {
-            // Check if firebaseConfig is populated
-            if (Object.keys(firebaseConfig).length === 0) {
-                console.warn("Firebase configuration is missing. Logging will not work correctly.");
-                document.getElementById('firebaseError').classList.remove('hidden');
-                document.getElementById('firebaseErrorMessage').textContent = "חסרה תצורת Firebase. יש לעדכן את הקוד עם פרטי הפרויקט שלך.";
-                // Prevent Firebase initialization if config is missing
-                isAuthReady = false;
-                return; // Exit script
-            }
-
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-
-            // Listen for authentication state changes
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid; // Set userId from authenticated user
-                    isAuthReady = true;
-                    console.log("Firebase Auth Ready. User ID:", userId);
-                    document.getElementById('displayUserId').textContent = userId;
-                } else {
-                    // Sign in anonymously if no user is signed in.
-                    await signInAnonymously(auth); // Changed from signInWithCustomToken as it's not relevant for GitHub Pages
-                }
-            });
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-            document.getElementById('firebaseError').classList.remove('hidden');
-            document.getElementById('firebaseErrorMessage').textContent = `שגיאה בטעינת Firebase: ${error.message}. לוגי תשובות לא יהיו זמינים. וודא שתצורת Firebase נכונה.`;
-            isAuthReady = false;
-        }
-
-        // Make Firebase instances and userId globally available to other scripts
-        window.db = db;
-        window.auth = auth;
+        // Make functions and variables for global access
+        window.db = null;
+        window.auth = null;
         window.getFirestore = getFirestore;
         window.collection = collection;
         window.addDoc = addDoc;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.getDocs = getDocs;
-        window.userId = userId; // This will be updated by onAuthStateChanged
-        window.getAuth = getAuth;
-        window.signInAnonymously = signInAnonymously;
-        // window.signInWithCustomToken = signInWithCustomToken; // Not used for GitHub Pages
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.appId = customAppId; // Use the customAppId defined above for logs
+        window.appId = customAppId;
         window.isAuthReady = () => isAuthReady;
+        window.getUserId = () => currentUserId;
+
+        // Wrap Firebase initialization in an async IIFE to allow 'return' for early exit on config errors
+        (async () => {
+            try {
+                // Check if firebaseConfig is populated
+                if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId || !firebaseConfig.apiKey) {
+                    console.error("Firebase configuration is missing or incomplete. Logging will not work correctly.");
+                    document.getElementById('firebaseError').classList.remove('hidden');
+                    document.getElementById('firebaseErrorMessage').textContent = "חסרה תצורת Firebase. יש לעדכן את הקוד עם פרטי הפרויקט שלך (apiKey, projectId, authDomain, וכו').";
+                    isAuthReady = false;
+                    return; // Exit this IIFE
+                }
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Assign to window for global access
+                window.db = db;
+                window.auth = auth;
+
+                // Listen for authentication state changes
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid; // Set userId from authenticated user
+                        isAuthReady = true;
+                        console.log("Firebase Auth Ready. User ID:", currentUserId);
+                        document.getElementById('displayUserId').textContent = currentUserId;
+                    } else {
+                        // Sign in anonymously if no user is signed in.
+                        try {
+                            const anonymousUserCredential = await signInAnonymously(auth);
+                            currentUserId = anonymousUserCredential.user.uid;
+                            isAuthReady = true;
+                            console.log("Signed in anonymously. User ID:", currentUserId);
+                            document.getElementById('displayUserId').textContent = currentUserId;
+                        } catch (anonError) {
+                            console.error("Anonymous sign-in failed:", anonError);
+                            document.getElementById('firebaseError').classList.remove('hidden');
+                            document.getElementById('firebaseErrorMessage').textContent = `שגיאת אימות: ${anonError.message}. ייתכן שאימות אנונימי לא מופעל ב-Firebase.`;
+                            isAuthReady = false;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+                document.getElementById('firebaseError').classList.remove('hidden');
+                document.getElementById('firebaseErrorMessage').textContent = `שגיאה באתחול Firebase: ${error.message}. לוגי תשובות לא יהיו זמינים. וודא שתצורת Firebase נכונה.`;
+                isAuthReady = false;
+            }
+        })(); // Immediately invoke the function
+
+        // Dummy window.userId setter for compatibility with old code that might directly access it
+        // It's better to use window.getUserId() now.
+        Object.defineProperty(window, 'userId', {
+            get: function() { return currentUserId; },
+            set: function(val) { currentUserId = val; console.warn("Direct setting of window.userId is discouraged. Use the Firebase auth state listener."); }
+        });
     </script>
     <style>
         body {
@@ -236,11 +249,11 @@ const firebaseConfig = {
     <script type="module">
         // Ensure Firebase modules are loaded before attempting to use them
         let firebaseReadyInterval = setInterval(() => {
-            // Check if window.isAuthReady and window.userId are defined before accessing them
-            if (typeof window.isAuthReady === 'function' && window.isAuthReady() && typeof window.userId !== 'undefined') {
+            // Check if window.isAuthReady is a function and returns true, and userId is set
+            if (typeof window.isAuthReady === 'function' && window.isAuthReady() && window.getUserId() !== 'loading...') {
                 clearInterval(firebaseReadyInterval);
-                console.log("Firebase is fully ready for interaction.");
-                document.getElementById('displayUserId').textContent = window.userId;
+                console.log("UI: Firebase is fully ready for interaction. User ID:", window.getUserId());
+                document.getElementById('displayUserId').textContent = window.getUserId();
             } else {
                 document.getElementById('displayUserId').textContent = 'טוען משתמש...';
             }
@@ -386,7 +399,7 @@ const firebaseConfig = {
             },
             {
                 description: "סוג מידע לתיעוד מספרי זיהוי אישיים שונים של העובד, כמו מספר דרכון, תעודת זהות זרה.",
-                correctAnswer: "0185 - מספרי זיהוי אישיים",
+                correctAnswer: "0185 - תעודת זהות / דרכון",
                 options: [ "0002 - נתונים אישיים", "0105 - תקשורת", "0185 - מספרי זיהוי אישיים", "0001 - הקצאת ארגון" ]
             },
             {
@@ -595,7 +608,7 @@ const firebaseConfig = {
                 userAnswerNumber,
                 currentQuestion.correctAnswer,
                 isCorrect,
-                window.userId // Pass the user ID for logging
+                window.getUserId() // Pass the user ID for logging using the getter
             );
         }
 
@@ -610,7 +623,11 @@ const firebaseConfig = {
         async function logAnswer(questionDesc, userAnswer, correctAnswer, isCorrect, userId) {
             // Check if Firebase is ready and if db is available
             if (!window.isAuthReady() || !window.db) {
-                console.warn("Firebase not fully initialized or db is not available. Cannot log answer.");
+                console.warn("LOG_ERROR: Firebase not fully initialized or db is not available. Cannot log answer.");
+                return;
+            }
+            if (!userId || userId === 'loading...') {
+                console.warn("LOG_ERROR: User ID is not set. Cannot log answer.");
                 return;
             }
 
@@ -627,9 +644,11 @@ const firebaseConfig = {
                     correctAnswer: correctAnswer,
                     isCorrect: isCorrect
                 });
-                console.log("Answer logged successfully!");
+                console.log("LOG_SUCCESS: Answer logged successfully to Firestore!");
             } catch (e) {
-                console.error("Error logging answer: ", e);
+                console.error("LOG_ERROR: Error adding document to Firestore: ", e);
+                document.getElementById('firebaseError').classList.remove('hidden');
+                document.getElementById('firebaseErrorMessage').textContent = `שגיאה בשמירת לוג: ${e.message}. וודא שכללי האבטחה והגדרות Firebase נכונים.`;
             }
         }
 
