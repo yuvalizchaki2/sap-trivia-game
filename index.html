@@ -232,7 +232,7 @@
             },
             {
                 description: "סוג מידע המתעד את היסטוריית התפקידים והקידומים של עובד בתוך הארגון.",
-                correctAnswer: "0001 - הקצאת ארגון", // While 0001 is org assignment, it can also reflect roles/positions
+                correctAnswer: "0001 - הקצאת ארגון", // Although 0001 is org assignment, it often encompasses roles/positions
                 options: [
                     "0001 - הקצאת ארגון",
                     "0022 - השכלה",
@@ -269,6 +269,146 @@
                     "0041 - תאריכי סוגי מידע",
                     "0077 - פרישה"
                 ]
+            },
+            {
+                description: "סוג מידע המשמש לרישום ניכויים קבועים מהשכר, כמו ביטוחים או הלוואות קבועות.",
+                correctAnswer: "0014 - תשלומים/ניכויים חוזרים",
+                options: [
+                    "0008 - שכר בסיס",
+                    "0014 - תשלומים/ניכויים חוזרים",
+                    "0015 - תשלומים נוספים",
+                    "0010 - ניהול תפקידים"
+                ]
+            },
+            {
+                description: "סוג מידע המתעד את פרטי החוזה של העובד, כולל תאריכי תחילת וסיום העסקה ותנאים ספציפיים.",
+                correctAnswer: "0016 - אלמנטי חוזה",
+                options: [
+                    "0001 - הקצאת ארגון",
+                    "0016 - אלמנטי חוזה",
+                    "0007 - תכנון עבודה",
+                    "0019 - מעקב אחר תאריכים"
+                ]
+            },
+            {
+                description: "סוג מידע המשמש לתיעוד הלוואות שניתנו לעובד על ידי החברה.",
+                correctAnswer: "0045 - הלוואות חברה",
+                options: [
+                    "0009 - פרטי בנק",
+                    "0015 - תשלומים נוספים",
+                    "0020 - הלוואה (עובד)", // This is more general "Loan" in some systems
+                    "0045 - הלוואות חברה"
+                ]
+            },
+            {
+                description: "סוג מידע לתיעוד פרטי השכלה פורמלית של העובד, כולל מוסדות לימוד, תארים ושנים.",
+                correctAnswer: "0022 - השכלה",
+                options: [
+                    "0021 - משפחה/תלויים",
+                    "0023 - הכשרה",
+                    "0022 - השכלה",
+                    "0025 - ניסיון קודם"
+                ]
+            },
+            {
+                description: "סוג מידע המפרט קורסים, סדנאות והכשרות מקצועיות שעבר העובד.",
+                correctAnswer: "0023 - הכשרה",
+                options: [
+                    "0022 - השכלה",
+                    "0023 - הכשרה",
+                    "0024 - הערכות",
+                    "0026 - מעסיק קודם"
+                ]
+            },
+            {
+                description: "סוג מידע לתיעוד ניסיון תעסוקתי קודם של העובד לפני כניסתו לארגון הנוכחי.",
+                correctAnswer: "0025 - ניסיון קודם",
+                options: [
+                    "0023 - הכשרה",
+                    "0024 - הערכות",
+                    "0025 - ניסיון קודם",
+                    "0027 - חלוקת עלויות"
+                ]
+            },
+            {
+                description: "סוג מידע לרישום תקופות שירות צבאי של העובד.",
+                correctAnswer: "0028 - שירות צבאי",
+                options: [
+                    "0021 - משפחה/תלויים",
+                    "0028 - שירות צבאי",
+                    "0029 - ביטוחים",
+                    "0030 - שחרורים"
+                ]
+            },
+            {
+                description: "סוג מידע המאפשר קישור עובד למספר עובד אחר (למשל, עבור כפילויות או נתונים היסטוריים).",
+                correctAnswer: "0031 - מספר אישי התייחסות",
+                options: [
+                    "0001 - הקצאת ארגון",
+                    "0031 - מספר אישי התייחסות",
+                    "0002 - נתונים אישיים",
+                    "0003 - נתוני שכר"
+                ]
+            },
+            {
+                description: "סוג מידע לתיעוד נכסים שהושאלו לעובד מהחברה, כמו מחשב נייד או טלפון.",
+                correctAnswer: "0040 - פריטים מושאלים",
+                options: [
+                    "0016 - אלמנטי חוזה",
+                    "0015 - תשלומים נוספים",
+                    "0040 - פריטים מושאלים",
+                    "0045 - הלוואות חברה"
+                ]
+            },
+            {
+                description: "סוג מידע המגדיר את סטטוס ניהול הזמן של העובד (לדוגמה, עובד שעתי, חודשי, חריגות).",
+                correctAnswer: "0050 - סטטוס ניהול זמנים",
+                options: [
+                    "0007 - תכנון עבודה",
+                    "0050 - סטטוס ניהול זמנים",
+                    "0051 - דוחית זמנים",
+                    "0052 - אישורי זמנים"
+                ]
+            },
+            {
+                description: "סוג מידע המכיל את פרטי מס הכנסה וניכויי מס רלוונטיים לעובד.",
+                correctAnswer: "0070 - נתוני מס",
+                options: [
+                    "0008 - שכר בסיס",
+                    "0009 - פרטי בנק",
+                    "0070 - נתוני מס",
+                    "0071 - ביטוח לאומי"
+                ]
+            },
+            {
+                description: "סוג מידע לרישום פרטי ביטוח לאומי ותשלומים קשורים עבור העובד.",
+                correctAnswer: "0071 - ביטוח לאומי",
+                options: [
+                    "0070 - נתוני מס",
+                    "0071 - ביטוח לאומי",
+                    "0072 - הטבות",
+                    "0073 - נתוני אשראי"
+                ]
+            },
+            {
+                description: "סוג מידע המכיל פרטי התקשרות נוספים עם העובד, כגון מספר טלפון נייד, כתובת מייל פרטית.",
+                correctAnswer: "0105 - תקשורת",
+                options: [
+                    "0002 - נתונים אישיים",
+                    "0006 - כתובות",
+                    "0105 - תקשורת",
+                    "0185 - מספרי זיהוי אישיים"
+                ]
+            },
+            {
+                description: "סוג מידע לתיעוד מספרי זיהוי אישיים שונים של העובד, כמו מספר דרכון, תעודת זהות זרה.",
+                correctAnswer: "0185 - מספרי זיהוי אישיים",
+                options: [
+                    "0002 - נתונים אישיים",
+                    "0105 - תקשורת",
+                    "0185 - מספרי זיהוי אישיים",
+                    "0001 - הקצאת ארגון"
+                ]
             }
         ];
 
@@ -276,7 +416,8 @@
         let score = 0;
         let gameStarted = false;
         let selectedOption = null; // To store the currently selected option button
-        let shuffledTriviaData = []; // To store the shuffled questions
+        let shuffledTriviaDataForRound = []; // To store the shuffled questions for the current round
+        const QUESTIONS_PER_ROUND = 7; // Define how many questions per game round
 
         // Get DOM elements
         const startScreen = document.getElementById('startScreen');
@@ -306,31 +447,35 @@
         }
 
         /**
-         * Starts the game, shuffles questions, hides the start screen, and displays the first question.
+         * Starts the game, shuffles questions, selects 7 for the round, hides the start screen, and displays the first question.
          */
         function startGame() {
             gameStarted = true;
-            shuffledTriviaData = [...triviaData]; // Create a shallow copy to shuffle
-            shuffleArray(shuffledTriviaData); // Shuffle the questions
+            // Create a shuffled copy of all trivia data
+            const allShuffledQuestions = [...triviaData];
+            shuffleArray(allShuffledQuestions);
+
+            // Select only the first QUESTIONS_PER_ROUND questions for this round
+            shuffledTriviaDataForRound = allShuffledQuestions.slice(0, QUESTIONS_PER_ROUND);
+
             startScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
             displayQuestion();
         }
 
         /**
-         * Displays the current question from the shuffledTriviaData array.
+         * Displays the current question from the shuffledTriviaDataForRound array.
          * Renders the options as buttons, extracting only the number.
          * Hides feedback and next button, enables submit button.
          */
         function displayQuestion() {
-            if (currentQuestionIndex < shuffledTriviaData.length) {
-                const question = shuffledTriviaData[currentQuestionIndex];
+            if (currentQuestionIndex < shuffledTriviaDataForRound.length) {
+                const question = shuffledTriviaDataForRound[currentQuestionIndex];
                 descriptionDisplay.textContent = question.description;
                 optionsContainer.innerHTML = ''; // Clear previous options
                 selectedOption = null; // Reset selected option
 
                 // Create and append option buttons, displaying only the infotype number
-                // It's important to also shuffle the options for each question for more variety
                 const shuffledOptions = [...question.options];
                 shuffleArray(shuffledOptions); // Shuffle options for the current question
 
@@ -385,7 +530,7 @@
                 return;
             }
 
-            const currentQuestion = shuffledTriviaData[currentQuestionIndex]; // Use shuffled data
+            const currentQuestion = shuffledTriviaDataForRound[currentQuestionIndex]; // Use data for the current round
             const userAnswerNumber = selectedOption.textContent.trim(); // Get only the number from the selected option
             const correctAnswerNumber = extractInfotypeNumber(currentQuestion.correctAnswer); // Get only the number from the correct answer
 
@@ -431,7 +576,7 @@
             gameScreen.classList.add('hidden');
             endScreen.classList.remove('hidden');
             finalScore.textContent = score;
-            totalQuestions.textContent = shuffledTriviaData.length; // Use shuffled data length for total
+            totalQuestions.textContent = shuffledTriviaDataForRound.length; // Use length of questions for the round
         }
 
         // Event Listeners
