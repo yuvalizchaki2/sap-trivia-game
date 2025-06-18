@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"> <!-- Added dir="rtl" for right-to-left language support -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>׳˜׳¨׳™׳•׳•׳™׳” ׳¡׳•׳’׳™ ׳׳™׳“׳¢ SAP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .game-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 2.5rem; /* More padding */
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between sections */
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem; /* Rounded buttons */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Blue */
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #cbd5e1; /* Light gray */
+            color: #4a5568; /* Dark gray text */
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #a0aec0; /* Darker gray on hover */
+            transform: translateY(-2px);
+        }
+        .option-button {
+            background-color: #edf2f7; /* Light gray for options */
+            color: #2d3748;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .option-button:hover:not(.correct):not(.incorrect) {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        .option-button.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+        .option-button.correct {
+            background-color: #d1fae5; /* Green for correct */
+            border-color: #065f46;
+            color: #065f46;
+        }
+        .option-button.incorrect {
+            background-color: #fee2e2; /* Red for incorrect */
+            border-color: #991b1b;
+            color: #991b1b;
+        }
+        .feedback-message {
+            font-weight: 600;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+        }
+        .feedback-correct {
+            background-color: #d1fae5; /* Green background */
+            color: #065f46; /* Dark green text */
+        }
+        .feedback-incorrect {
+            background-color: #fee2e2; /* Red background */
+            color: #991b1b; /* Dark red text */
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer" class="game-container">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">׳˜׳¨׳™׳•׳•׳™׳” ׳¡׳•׳’׳™ ׳׳™׳“׳¢ SAP</h1>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="flex flex-col items-center gap-6">
+            <p class="text-gray-600 text-lg">׳‘׳“׳•׳§ ׳׳× ׳”׳™׳“׳¢ ׳©׳׳ ׳‘׳¡׳•׳’׳™ ׳׳™׳“׳¢ ׳•׳×׳×-׳¡׳•׳’׳™ ׳׳™׳“׳¢ ׳©׳ SAP! ׳×׳§׳‘׳ ׳×׳™׳׳•׳¨ ׳•׳×׳¦׳˜׳¨׳ ׳׳‘׳—׳•׳¨ ׳׳× ׳”׳×׳©׳•׳‘׳” ׳”׳ ׳›׳•׳ ׳” ׳׳‘׳™׳ 4 ׳׳₪׳©׳¨׳•׳™׳•׳×.</p>
+            <button id="startButton" class="btn btn-primary w-full md:w-auto">׳”׳×׳—׳ ׳׳©׳—׳§</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="hidden flex-col items-center gap-6">
+            <div class="w-full text-right"> <!-- Adjusted text-align for RTL -->
+                <p class="text-gray-700 text-lg font-semibold mb-2">׳×׳™׳׳•׳¨:</p>
+                <div id="descriptionDisplay" class="bg-blue-50 p-4 rounded-xl text-blue-800 text-xl font-medium shadow-inner">
+                    <!-- Description will be loaded here -->
+                </div>
+            </div>
+
+            <div id="optionsContainer" class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Options will be loaded here dynamically -->
+            </div>
+
+            <div id="feedbackMessage" class="hidden feedback-message w-full"></div>
+
+            <div class="flex flex-col md:flex-row gap-4 w-full">
+                <button id="submitAnswerButton" class="btn btn-primary flex-grow">׳©׳׳— ׳×׳©׳•׳‘׳”</button>
+                <button id="nextQuestionButton" class="btn btn-secondary flex-grow hidden">׳©׳׳׳” ׳”׳‘׳׳”</button>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div id="endScreen" class="hidden flex-col items-center gap-6">
+            <h2 class="text-2xl font-bold text-gray-800">׳”׳׳©׳—׳§ ׳ ׳’׳׳¨!</h2>
+            <p class="text-gray-600 text-xl">׳”׳©׳’׳×: <span id="finalScore" class="font-bold text-blue-600">0</span> ׳׳×׳•׳ <span id="totalQuestions" class="font-bold text-blue-600">0</span> ׳ ׳§׳•׳“׳•׳×</p>
+            <button id="playAgainButton" class="btn btn-primary w-full md:w-auto">׳©׳—׳§ ׳©׳•׳‘</button>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to extract only the number from a string like "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳"
+        function extractInfotypeNumber(text) {
+            const match = text.match(/^(\d+)/);
+            return match ? match[1] : '';
+        }
+
+        // Function to shuffle an array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+        // Trivia data for SAP infotypes, with 4 options.
+        // Each correct answer is a combination of 'Info Number - Info Subtype'.
+        // Options will be displayed as just the number (e.g., "0002").
+        const triviaData = [
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳˜׳₪׳ ׳‘׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳ ׳‘׳¡׳™׳¡׳™׳™׳ ׳©׳ ׳¢׳•׳‘׳“׳™׳, ׳›׳’׳•׳ ׳©׳, ׳×׳׳¨׳™׳ ׳׳™׳“׳”, ׳•׳׳¦׳‘ ׳׳©׳₪׳—׳×׳™.",
+                correctAnswer: "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                options: [
+                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                    "0003 - ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨",
+                    "0006 - ׳›׳×׳•׳‘׳•׳×"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳׳—׳¡׳ ׳׳× ׳₪׳¨׳˜׳™ ׳”׳›׳×׳•׳‘׳× ׳©׳ ׳”׳¢׳•׳‘׳“ (׳›׳×׳•׳‘׳× ׳׳’׳•׳¨׳™׳, ׳›׳×׳•׳‘׳× ׳׳×׳›׳×׳•׳‘׳× ׳•׳›׳•').",
+                correctAnswer: "0006 - ׳›׳×׳•׳‘׳•׳×",
+                options: [
+                    "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
+                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
+                    "0006 - ׳›׳×׳•׳‘׳•׳×",
+                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳—׳™׳•׳ ׳™ ׳׳ ׳™׳”׳•׳ ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨ ׳¢׳‘׳•׳¨ ׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳¡׳•׳’׳™ ׳©׳›׳¨ (wagetyes) ׳•׳¡׳›׳•׳׳™׳.",
+                correctAnswer: "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
+                options: [
+                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
+                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳©׳׳© ׳׳”׳§׳¦׳׳× ׳¢׳•׳‘׳“׳™׳ ׳׳™׳—׳™׳“׳” ׳׳¨׳’׳•׳ ׳™׳×, ׳׳™׳§׳•׳ ׳•׳§׳‘׳•׳¦׳× ׳¢׳•׳‘׳“׳™׳.",
+                correctAnswer: "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                options: [
+                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                    "0004 - ׳”׳˜׳‘׳•׳×",
+                    "0005 - ׳–׳׳ ׳™ ׳¢׳‘׳•׳“׳”",
+                    "0010 - ׳ ׳™׳”׳•׳ ׳×׳₪׳§׳™׳“׳™׳"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳˜׳₪׳ ׳‘׳₪׳¨׳˜׳™ ׳—׳©׳‘׳•׳ ׳”׳‘׳ ׳§ ׳©׳ ׳”׳¢׳•׳‘׳“ ׳׳¦׳•׳¨׳ ׳”׳¢׳‘׳¨׳× ׳©׳›׳¨ ׳•׳”׳—׳–׳¨׳™׳.",
+                correctAnswer: "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
+                options: [
+                    "0003 - ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨",
+                    "0005 - ׳–׳׳ ׳™ ׳¢׳‘׳•׳“׳”",
+                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
+                    "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳₪׳¨׳˜ ׳׳× ׳×׳•׳›׳ ׳™׳× ׳”׳¢׳‘׳•׳“׳” ׳•׳׳•׳— ׳”׳–׳׳ ׳™׳ ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳©׳¢׳•׳× ׳¢׳‘׳•׳“׳” ׳•׳—׳׳•׳§׳× ׳׳©׳׳¨׳•׳×.",
+                correctAnswer: "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
+                options: [
+                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                    "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
+                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳׳₪׳©׳¨ ׳¨׳™׳©׳•׳ ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳ ׳׳¢׳•׳‘׳“׳™׳ ׳׳¢׳‘׳¨ ׳׳©׳›׳¨ ׳”׳‘׳¡׳™׳¡, ׳›׳’׳•׳ ׳‘׳•׳ ׳•׳¡׳™׳ ׳׳• ׳”׳—׳–׳¨׳™ ׳”׳•׳¦׳׳•׳×.",
+                correctAnswer: "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳",
+                options: [
+                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
+                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
+                    "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳",
+                    "0014 - ׳ ׳™׳›׳•׳™׳™׳"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳×׳¢׳“ ׳׳× ׳”׳™׳¡׳˜׳•׳¨׳™׳™׳× ׳”׳×׳₪׳§׳™׳“׳™׳ ׳•׳”׳§׳™׳“׳•׳׳™׳ ׳©׳ ׳¢׳•׳‘׳“ ׳‘׳×׳•׳ ׳”׳׳¨׳’׳•׳.",
+                correctAnswer: "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳", // While 0001 is org assignment, it can also reflect roles/positions
+                options: [
+                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                    "0022 - ׳”׳©׳›׳׳”",
+                    "0023 - ׳”׳›׳©׳¨׳”",
+                    "0024 - ׳”׳¢׳¨׳›׳•׳×"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳›׳™׳ ׳₪׳¨׳˜׳™׳ ׳¢׳ ׳‘׳ ׳™ ׳׳©׳₪׳—׳” ׳•׳×׳׳•׳™׳™׳ ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳’׳•׳ ׳™׳׳“׳™׳ ׳•׳‘׳/׳‘׳× ׳–׳•׳’.",
+                correctAnswer: "0021 - ׳׳©׳₪׳—׳”/׳×׳׳•׳™׳™׳",
+                options: [
+                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                    "0006 - ׳›׳×׳•׳‘׳•׳×",
+                    "0021 - ׳׳©׳₪׳—׳”/׳×׳׳•׳™׳™׳",
+                    "0028 - ׳©׳™׳¨׳•׳× ׳¦׳‘׳׳™"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳©׳׳© ׳׳×׳™׳¢׳•׳“ ׳׳™׳•׳׳ ׳•׳™׳•׳× ׳•׳™׳›׳•׳׳•׳× ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳×׳׳¨׳™׳›׳™ ׳×׳•׳§׳£ ׳•׳¨׳׳•׳× ׳׳™׳•׳׳ ׳•׳×.",
+                correctAnswer: "0024 - ׳”׳¢׳¨׳›׳•׳×", // Can be used for skills/qualifications too, but 0024 often covers broader assessments
+                options: [
+                    "0022 - ׳”׳©׳›׳׳”",
+                    "0023 - ׳”׳›׳©׳¨׳”",
+                    "0024 - ׳”׳¢׳¨׳›׳•׳×",
+                    "0025 - ׳ ׳™׳¡׳™׳•׳ ׳§׳•׳“׳"
+                ]
+            },
+            {
+                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳×׳¢׳“ ׳₪׳¨׳˜׳™׳ ׳¢׳ ׳¢׳–׳™׳‘׳× ׳¢׳•׳‘׳“ ׳׳”׳׳¨׳’׳•׳, ׳›׳•׳׳ ׳×׳׳¨׳™׳ ׳¡׳™׳•׳ ׳”׳¢׳¡׳§׳” ׳•׳¡׳™׳‘׳× ׳”׳¢׳–׳™׳‘׳”.",
+                correctAnswer: "0019 - ׳׳¢׳§׳‘ ׳׳—׳¨ ׳×׳׳¨׳™׳›׳™׳", // Often includes separation dates
+                options: [
+                    "0000 - ׳₪׳¢׳•׳׳•׳×",
+                    "0019 - ׳׳¢׳§׳‘ ׳׳—׳¨ ׳×׳׳¨׳™׳›׳™׳",
+                    "0041 - ׳×׳׳¨׳™׳›׳™ ׳¡׳•׳’׳™ ׳׳™׳“׳¢",
+                    "0077 - ׳₪׳¨׳™׳©׳”"
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let gameStarted = false;
+        let selectedOption = null; // To store the currently selected option button
+        let shuffledTriviaData = []; // To store the shuffled questions
+
+        // Get DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const endScreen = document.getElementById('endScreen');
+
+        const startButton = document.getElementById('startButton');
+        const descriptionDisplay = document.getElementById('descriptionDisplay');
+        const optionsContainer = document.getElementById('optionsContainer'); // New container for options
+        const submitAnswerButton = document.getElementById('submitAnswerButton');
+        const nextQuestionButton = document.getElementById('nextQuestionButton');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const finalScore = document.getElementById('finalScore');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const playAgainButton = document.getElementById('playAgainButton');
+
+        /**
+         * Initializes the game state and displays the start screen.
+         */
+        function initializeGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            gameStarted = false;
+            startScreen.classList.remove('hidden');
+            gameScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+        }
+
+        /**
+         * Starts the game, shuffles questions, hides the start screen, and displays the first question.
+         */
+        function startGame() {
+            gameStarted = true;
+            shuffledTriviaData = [...triviaData]; // Create a shallow copy to shuffle
+            shuffleArray(shuffledTriviaData); // Shuffle the questions
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            displayQuestion();
+        }
+
+        /**
+         * Displays the current question from the shuffledTriviaData array.
+         * Renders the options as buttons, extracting only the number.
+         * Hides feedback and next button, enables submit button.
+         */
+        function displayQuestion() {
+            if (currentQuestionIndex < shuffledTriviaData.length) {
+                const question = shuffledTriviaData[currentQuestionIndex];
+                descriptionDisplay.textContent = question.description;
+                optionsContainer.innerHTML = ''; // Clear previous options
+                selectedOption = null; // Reset selected option
+
+                // Create and append option buttons, displaying only the infotype number
+                // It's important to also shuffle the options for each question for more variety
+                const shuffledOptions = [...question.options];
+                shuffleArray(shuffledOptions); // Shuffle options for the current question
+
+                shuffledOptions.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.textContent = extractInfotypeNumber(optionText); // Display only the number
+                    button.classList.add('option-button');
+                    button.addEventListener('click', () => selectOption(button));
+                    optionsContainer.appendChild(button);
+                });
+
+                feedbackMessage.classList.add('hidden');
+                feedbackMessage.textContent = '';
+                submitAnswerButton.classList.remove('hidden');
+                nextQuestionButton.classList.add('hidden');
+
+                // Enable all option buttons
+                Array.from(optionsContainer.children).forEach(button => {
+                    button.disabled = false;
+                    button.classList.remove('selected', 'correct', 'incorrect');
+                });
+
+            } else {
+                endGame(); // No more questions
+            }
+        }
+
+        /**
+         * Handles the selection of an option button.
+         * @param {HTMLElement} button - The button that was clicked.
+         */
+        function selectOption(button) {
+            // Remove 'selected' class from previously selected button
+            if (selectedOption) {
+                selectedOption.classList.remove('selected');
+            }
+            // Add 'selected' class to the new button
+            button.classList.add('selected');
+            selectedOption = button;
+        }
+
+        /**
+         * Checks the user's answer against the correct answer.
+         * Displays feedback and updates the score.
+         * Disables option buttons and shows the next question button.
+         */
+        function checkAnswer() {
+            if (!selectedOption) {
+                feedbackMessage.classList.remove('hidden');
+                feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect');
+                feedbackMessage.textContent = '׳׳ ׳ ׳‘׳—׳¨ ׳×׳©׳•׳‘׳” ׳׳₪׳ ׳™ ׳©׳׳™׳—׳”.'; // Please select an answer before submitting.
+                return;
+            }
+
+            const currentQuestion = shuffledTriviaData[currentQuestionIndex]; // Use shuffled data
+            const userAnswerNumber = selectedOption.textContent.trim(); // Get only the number from the selected option
+            const correctAnswerNumber = extractInfotypeNumber(currentQuestion.correctAnswer); // Get only the number from the correct answer
+
+            feedbackMessage.classList.remove('hidden');
+            submitAnswerButton.classList.add('hidden');
+            nextQuestionButton.classList.remove('hidden');
+
+            // Disable all option buttons
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+                if (extractInfotypeNumber(button.textContent.trim()) === correctAnswerNumber) {
+                    button.classList.add('correct'); // Highlight correct answer
+                }
+            });
+
+            if (userAnswerNumber === correctAnswerNumber) {
+                score++;
+                feedbackMessage.classList.remove('feedback-incorrect');
+                feedbackMessage.classList.add('feedback-correct');
+                // Correct answer feedback: only the short description (e.g., "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳")
+                feedbackMessage.textContent = `׳ ׳›׳•׳! ${currentQuestion.correctAnswer}`;
+            } else {
+                selectedOption.classList.add('incorrect'); // Highlight incorrect chosen answer
+                feedbackMessage.classList.remove('feedback-correct');
+                feedbackMessage.classList.add('feedback-incorrect');
+                // Incorrect answer feedback: only the short description of the correct answer
+                feedbackMessage.innerHTML = `׳׳ ׳ ׳›׳•׳! ׳”׳×׳©׳•׳‘׳” ׳”׳ ׳›׳•׳ ׳”: <span class="font-bold">${currentQuestion.correctAnswer}</span>`;
+            }
+        }
+
+        /**
+         * Moves to the next question or ends the game if all questions are answered.
+         */
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        /**
+         * Ends the game, displays the final score, and shows the end screen.
+         */
+        function endGame() {
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            finalScore.textContent = score;
+            totalQuestions.textContent = shuffledTriviaData.length; // Use shuffled data length for total
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', startGame);
+        submitAnswerButton.addEventListener('click', checkAnswer);
+        nextQuestionButton.addEventListener('click', nextQuestion);
+        playAgainButton.addEventListener('click', initializeGame);
+
+        // Initialize the game when the page loads
+        document.addEventListener('DOMContentLoaded', initializeGame);
+
+    </script>
+</body>
+</html>
