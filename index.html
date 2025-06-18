@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl"> <!-- Added dir="rtl" for right-to-left language support -->
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,84 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase configuration and initialization
+        // *******************************************************************
+        const firebaseConfig = {
+          apiKey: "AIzaSyCzxnDTobC1K8ySwmuJ4e16C5uWvbi85Pg",
+          authDomain: "sapgame-69979.firebaseapp.com",
+          projectId: "sapgame-69979",
+          storageBucket: "sapgame-69979.firebasestorage.app",
+          messagingSenderId: "1013659593256",
+          appId: "1:1013659593256:web:f87e02b548debae767231d",
+          measurementId: "G-ZSMZZZLTEE"
+        };
+        const customAppId = "sap-trivia-game-logs"; // לדוגמה, שם ייחודי עבור נתיב הלוגים
+        // *******************************************************************
+
+        let app;
+        let db;
+        let auth;
+        let userId = 'anonymous'; // Default to anonymous until authenticated
+        let isAuthReady = false;
+
+        // Initialize Firebase app and services
+        try {
+            // Check if firebaseConfig is populated
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.warn("Firebase configuration is missing. Logging will not work correctly.");
+                document.getElementById('firebaseError').classList.remove('hidden');
+                document.getElementById('firebaseErrorMessage').textContent = "חסרה תצורת Firebase. יש לעדכן את הקוד עם פרטי הפרויקט שלך.";
+                // Prevent Firebase initialization if config is missing
+                isAuthReady = false;
+                return; // Exit script
+            }
+
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Listen for authentication state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid; // Set userId from authenticated user
+                    isAuthReady = true;
+                    console.log("Firebase Auth Ready. User ID:", userId);
+                    document.getElementById('displayUserId').textContent = userId;
+                } else {
+                    // Sign in anonymously if no user is signed in.
+                    await signInAnonymously(auth); // Changed from signInWithCustomToken as it's not relevant for GitHub Pages
+                }
+            });
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            document.getElementById('firebaseError').classList.remove('hidden');
+            document.getElementById('firebaseErrorMessage').textContent = `שגיאה בטעינת Firebase: ${error.message}. לוגי תשובות לא יהיו זמינים. וודא שתצורת Firebase נכונה.`;
+            isAuthReady = false;
+        }
+
+        // Make Firebase instances and userId globally available to other scripts
+        window.db = db;
+        window.auth = auth;
+        window.getFirestore = getFirestore;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.userId = userId; // This will be updated by onAuthStateChanged
+        window.getAuth = getAuth;
+        window.signInAnonymously = signInAnonymously;
+        // window.signInWithCustomToken = signInWithCustomToken; // Not used for GitHub Pages
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.appId = customAppId; // Use the customAppId defined above for logs
+        window.isAuthReady = () => isAuthReady;
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -106,10 +184,21 @@
     <div id="gameContainer" class="game-container">
         <h1 class="text-3xl font-bold text-gray-800 mb-4">טריוויה סוגי מידע SAP</h1>
 
+        <!-- Firebase Error Message (hidden by default) -->
+        <div id="firebaseError" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">שגיאה!</strong>
+            <span class="block sm:inline" id="firebaseErrorMessage"></span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" onclick="document.getElementById('firebaseError').classList.add('hidden');"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </span>
+        </div>
+
+
         <!-- Start Screen -->
         <div id="startScreen" class="flex flex-col items-center gap-6">
             <p class="text-gray-600 text-lg">בדוק את הידע שלך בסוגי מידע ותת-סוגי מידע של SAP! תקבל תיאור ותצטרך לבחור את התשובה הנכונה מבין 4 אפשרויות.</p>
             <button id="startButton" class="btn btn-primary w-full md:w-auto">התחל משחק</button>
+            <p class="text-xs text-gray-500 mt-2">ID משתמש: <span id="displayUserId">...טוען...</span></p>
         </div>
 
         <!-- Game Screen -->
@@ -141,7 +230,19 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Ensure Firebase modules are loaded before attempting to use them
+        let firebaseReadyInterval = setInterval(() => {
+            // Check if window.isAuthReady and window.userId are defined before accessing them
+            if (typeof window.isAuthReady === 'function' && window.isAuthReady() && typeof window.userId !== 'undefined') {
+                clearInterval(firebaseReadyInterval);
+                console.log("Firebase is fully ready for interaction.");
+                document.getElementById('displayUserId').textContent = window.userId;
+            } else {
+                document.getElementById('displayUserId').textContent = 'טוען משתמש...';
+            }
+        }, 100);
+
         // Helper function to extract only the number from a string like "0002 - נתונים אישיים"
         function extractInfotypeNumber(text) {
             const match = text.match(/^(\d+)/);
@@ -163,252 +264,177 @@
             {
                 description: "סוג מידע המטפל בנתונים אישיים בסיסיים של עובדים, כגון שם, תאריך לידה, ומצב משפחתי.",
                 correctAnswer: "0002 - נתונים אישיים",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0002 - נתונים אישיים",
-                    "0003 - נתוני שכר",
-                    "0006 - כתובות"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0002 - נתונים אישיים", "0003 - נתוני שכר", "0006 - כתובות" ]
             },
             {
                 description: "סוג מידע המאחסן את פרטי הכתובת של העובד (כתובת מגורים, כתובת לתכתובת וכו').",
                 correctAnswer: "0006 - כתובות",
-                options: [
-                    "0007 - תכנון עבודה",
-                    "0008 - שכר בסיס",
-                    "0006 - כתובות",
-                    "0009 - פרטי בנק"
-                ]
+                options: [ "0007 - תכנון עבודה", "0008 - שכר בסיס", "0006 - כתובות", "0009 - פרטי בנק" ]
             },
             {
                 description: "סוג מידע חיוני לניהול נתוני שכר עבור עובד, כולל סוגי שכר (wagetyes) וסכומים.",
                 correctAnswer: "0008 - שכר בסיס",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0002 - נתונים אישיים",
-                    "0008 - שכר בסיס",
-                    "0009 - פרטי בנק"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0002 - נתונים אישיים", "0008 - שכר בסיס", "0009 - פרטי בנק" ]
             },
             {
                 description: "סוג מידע המשמש להקצאת עובדים ליחידה ארגונית, מיקום וקבוצת עובדים.",
                 correctAnswer: "0001 - הקצאת ארגון",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0004 - הטבות",
-                    "0005 - זמני עבודה",
-                    "0010 - ניהול תפקידים"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0004 - הטבות", "0005 - זמני עבודה", "0010 - ניהול תפקידים" ]
             },
             {
                 description: "סוג מידע המטפל בפרטי חשבון הבנק של העובד לצורך העברת שכר והחזרים.",
                 correctAnswer: "0009 - פרטי בנק",
-                options: [
-                    "0003 - נתוני שכר",
-                    "0005 - זמני עבודה",
-                    "0009 - פרטי בנק",
-                    "0015 - תשלומים נוספים"
-                ]
+                options: [ "0003 - נתוני שכר", "0005 - זמני עבודה", "0009 - פרטי בנק", "0015 - תשלומים נוספים" ]
             },
             {
                 description: "סוג מידע המפרט את תוכנית העבודה ולוח הזמנים של העובד, כולל שעות עבודה וחלוקת משמרות.",
                 correctAnswer: "0007 - תכנון עבודה",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0002 - נתונים אישיים",
-                    "0007 - תכנון עבודה",
-                    "0008 - שכר בסיס"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0002 - נתונים אישיים", "0007 - תכנון עבודה", "0008 - שכר בסיס" ]
             },
             {
                 description: "סוג מידע המאפשר רישום תשלומים נוספים לעובדים מעבר לשכר הבסיס, כגון בונוסים או החזרי הוצאות.",
                 correctAnswer: "0015 - תשלומים נוספים",
-                options: [
-                    "0008 - שכר בסיס",
-                    "0009 - פרטי בנק",
-                    "0015 - תשלומים נוספים",
-                    "0014 - ניכויים"
-                ]
+                options: [ "0008 - שכר בסיס", "0009 - פרטי בנק", "0015 - תשלומים נוספים", "0014 - ניכויים" ]
             },
             {
                 description: "סוג מידע המתעד את היסטוריית התפקידים והקידומים של עובד בתוך הארגון.",
                 correctAnswer: "0001 - הקצאת ארגון", // Although 0001 is org assignment, it often encompasses roles/positions
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0022 - השכלה",
-                    "0023 - הכשרה",
-                    "0024 - הערכות"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0022 - השכלה", "0023 - הכשרה", "0024 - הערכות" ]
             },
             {
                 description: "סוג מידע המכיל פרטים על בני משפחה ותלויים של העובד, כגון ילדים ובן/בת זוג.",
                 correctAnswer: "0021 - משפחה/תלויים",
-                options: [
-                    "0002 - נתונים אישיים",
-                    "0006 - כתובות",
-                    "0021 - משפחה/תלויים",
-                    "0028 - שירות צבאי"
-                ]
+                options: [ "0002 - נתונים אישיים", "0006 - כתובות", "0021 - משפחה/תלויים", "0028 - שירות צבאי" ]
             },
             {
                 description: "סוג מידע המשמש לתיעוד מיומנויות ויכולות של העובד, כולל תאריכי תוקף ורמות מיומנות.",
                 correctAnswer: "0024 - הערכות", // Can be used for skills/qualifications too, but 0024 often covers broader assessments
-                options: [
-                    "0022 - השכלה",
-                    "0023 - הכשרה",
-                    "0024 - הערכות",
-                    "0025 - ניסיון קודם"
-                ]
+                options: [ "0022 - השכלה", "0023 - הכשרה", "0024 - הערכות", "0025 - ניסיון קודם" ]
             },
             {
                 description: "סוג מידע המתעד פרטים על עזיבת עובד מהארגון, כולל תאריך סיום העסקה וסיבת העזיבה.",
                 correctAnswer: "0019 - מעקב אחר תאריכים", // Often includes separation dates
-                options: [
-                    "0000 - פעולות",
-                    "0019 - מעקב אחר תאריכים",
-                    "0041 - תאריכי סוגי מידע",
-                    "0077 - פרישה"
-                ]
+                options: [ "0000 - פעולות", "0019 - מעקב אחר תאריכים", "0041 - תאריכי סוגי מידע", "0077 - פרישה" ]
             },
             {
                 description: "סוג מידע המשמש לרישום ניכויים קבועים מהשכר, כמו ביטוחים או הלוואות קבועות.",
                 correctAnswer: "0014 - תשלומים/ניכויים חוזרים",
-                options: [
-                    "0008 - שכר בסיס",
-                    "0014 - תשלומים/ניכויים חוזרים",
-                    "0015 - תשלומים נוספים",
-                    "0010 - ניהול תפקידים"
-                ]
+                options: [ "0008 - שכר בסיס", "0014 - תשלומים/ניכויים חוזרים", "0015 - תשלומים נוספים", "0010 - ניהול תפקידים" ]
             },
             {
                 description: "סוג מידע המתעד את פרטי החוזה של העובד, כולל תאריכי תחילת וסיום העסקה ותנאים ספציפיים.",
                 correctAnswer: "0016 - אלמנטי חוזה",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0016 - אלמנטי חוזה",
-                    "0007 - תכנון עבודה",
-                    "0019 - מעקב אחר תאריכים"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0016 - אלמנטי חוזה", "0007 - תכנון עבודה", "0019 - מעקב אחר תאריכים" ]
             },
             {
                 description: "סוג מידע המשמש לתיעוד הלוואות שניתנו לעובד על ידי החברה.",
                 correctAnswer: "0045 - הלוואות חברה",
-                options: [
-                    "0009 - פרטי בנק",
-                    "0015 - תשלומים נוספים",
-                    "0020 - הלוואה (עובד)", // This is more general "Loan" in some systems
-                    "0045 - הלוואות חברה"
-                ]
+                options: [ "0009 - פרטי בנק", "0015 - תשלומים נוספים", "0020 - הלוואה (עובד)", "0045 - הלוואות חברה" ]
             },
             {
                 description: "סוג מידע לתיעוד פרטי השכלה פורמלית של העובד, כולל מוסדות לימוד, תארים ושנים.",
                 correctAnswer: "0022 - השכלה",
-                options: [
-                    "0021 - משפחה/תלויים",
-                    "0023 - הכשרה",
-                    "0022 - השכלה",
-                    "0025 - ניסיון קודם"
-                ]
+                options: [ "0021 - משפחה/תלויים", "0023 - הכשרה", "0022 - השכלה", "0025 - ניסיון קודם" ]
             },
             {
                 description: "סוג מידע המפרט קורסים, סדנאות והכשרות מקצועיות שעבר העובד.",
                 correctAnswer: "0023 - הכשרה",
-                options: [
-                    "0022 - השכלה",
-                    "0023 - הכשרה",
-                    "0024 - הערכות",
-                    "0026 - מעסיק קודם"
-                ]
+                options: [ "0022 - השכלה", "0023 - הכשרה", "0024 - הערכות", "0026 - מעסיק קודם" ]
             },
             {
                 description: "סוג מידע לתיעוד ניסיון תעסוקתי קודם של העובד לפני כניסתו לארגון הנוכחי.",
                 correctAnswer: "0025 - ניסיון קודם",
-                options: [
-                    "0023 - הכשרה",
-                    "0024 - הערכות",
-                    "0025 - ניסיון קודם",
-                    "0027 - חלוקת עלויות"
-                ]
+                options: [ "0023 - הכשרה", "0024 - הערכות", "0025 - ניסיון קודם", "0027 - חלוקת עלויות" ]
             },
             {
                 description: "סוג מידע לרישום תקופות שירות צבאי של העובד.",
                 correctAnswer: "0028 - שירות צבאי",
-                options: [
-                    "0021 - משפחה/תלויים",
-                    "0028 - שירות צבאי",
-                    "0029 - ביטוחים",
-                    "0030 - שחרורים"
-                ]
+                options: [ "0021 - משפחה/תלויים", "0028 - שירות צבאי", "0029 - ביטוחים", "0030 - שחרורים" ]
             },
             {
                 description: "סוג מידע המאפשר קישור עובד למספר עובד אחר (למשל, עבור כפילויות או נתונים היסטוריים).",
                 correctAnswer: "0031 - מספר אישי התייחסות",
-                options: [
-                    "0001 - הקצאת ארגון",
-                    "0031 - מספר אישי התייחסות",
-                    "0002 - נתונים אישיים",
-                    "0003 - נתוני שכר"
-                ]
+                options: [ "0001 - הקצאת ארגון", "0031 - מספר אישי התייחסות", "0002 - נתונים אישיים", "0003 - נתוני שכר" ]
             },
             {
                 description: "סוג מידע לתיעוד נכסים שהושאלו לעובד מהחברה, כמו מחשב נייד או טלפון.",
                 correctAnswer: "0040 - פריטים מושאלים",
-                options: [
-                    "0016 - אלמנטי חוזה",
-                    "0015 - תשלומים נוספים",
-                    "0040 - פריטים מושאלים",
-                    "0045 - הלוואות חברה"
-                ]
+                options: [ "0016 - אלמנטי חוזה", "0015 - תשלומים נוספים", "0040 - פריטים מושאלים", "0045 - הלוואות חברה" ]
             },
             {
                 description: "סוג מידע המגדיר את סטטוס ניהול הזמן של העובד (לדוגמה, עובד שעתי, חודשי, חריגות).",
                 correctAnswer: "0050 - סטטוס ניהול זמנים",
-                options: [
-                    "0007 - תכנון עבודה",
-                    "0050 - סטטוס ניהול זמנים",
-                    "0051 - דוחית זמנים",
-                    "0052 - אישורי זמנים"
-                ]
+                options: [ "0007 - תכנון עבודה", "0050 - סטטוס ניהול זמנים", "0051 - דוחית זמנים", "0052 - אישורי זמנים" ]
             },
             {
                 description: "סוג מידע המכיל את פרטי מס הכנסה וניכויי מס רלוונטיים לעובד.",
                 correctAnswer: "0070 - נתוני מס",
-                options: [
-                    "0008 - שכר בסיס",
-                    "0009 - פרטי בנק",
-                    "0070 - נתוני מס",
-                    "0071 - ביטוח לאומי"
-                ]
+                options: [ "0008 - שכר בסיס", "0009 - פרטי בנק", "0070 - נתוני מס", "0071 - ביטוח לאומי" ]
             },
             {
                 description: "סוג מידע לרישום פרטי ביטוח לאומי ותשלומים קשורים עבור העובד.",
                 correctAnswer: "0071 - ביטוח לאומי",
-                options: [
-                    "0070 - נתוני מס",
-                    "0071 - ביטוח לאומי",
-                    "0072 - הטבות",
-                    "0073 - נתוני אשראי"
-                ]
+                options: [ "0070 - נתוני מס", "0071 - ביטוח לאומי", "0072 - הטבות", "0073 - נתוני אשראי" ]
             },
             {
                 description: "סוג מידע המכיל פרטי התקשרות נוספים עם העובד, כגון מספר טלפון נייד, כתובת מייל פרטית.",
                 correctAnswer: "0105 - תקשורת",
-                options: [
-                    "0002 - נתונים אישיים",
-                    "0006 - כתובות",
-                    "0105 - תקשורת",
-                    "0185 - מספרי זיהוי אישיים"
-                ]
+                options: [ "0002 - נתונים אישיים", "0006 - כתובות", "0105 - תקשורת", "0185 - מספרי זיהוי אישיים" ]
             },
             {
                 description: "סוג מידע לתיעוד מספרי זיהוי אישיים שונים של העובד, כמו מספר דרכון, תעודת זהות זרה.",
                 correctAnswer: "0185 - מספרי זיהוי אישיים",
-                options: [
-                    "0002 - נתונים אישיים",
-                    "0105 - תקשורת",
-                    "0185 - מספרי זיהוי אישיים",
-                    "0001 - הקצאת ארגון"
-                ]
+                options: [ "0002 - נתונים אישיים", "0105 - תקשורת", "0185 - מספרי זיהוי אישיים", "0001 - הקצאת ארגון" ]
+            },
+            {
+                description: "סוג מידע לרישום תוכניות הטבה והשתתפות העובד בהן (כגון ביטוחי בריאות, פנסיה).",
+                correctAnswer: "0072 - הטבות",
+                options: [ "0004 - הטבות", "0072 - הטבות", "0016 - אלמנטי חוזה", "0014 - תשלומים/ניכויים חוזרים" ]
+            },
+            {
+                description: "סוג מידע לניהול חופשות של עובדים, כולל יתרות חופשה, בקשות ואישורים.",
+                correctAnswer: "2001 - היעדרויות",
+                options: [ "0007 - תכנון עבודה", "2001 - היעדרויות", "2002 - נוכחויות", "2003 - תחליפי עבודה" ]
+            },
+            {
+                description: "סוג מידע המתעד שעות עבודה בפועל של עובדים, כולל שעות נוספות, כניסות ויציאות.",
+                correctAnswer: "2002 - נוכחויות",
+                options: [ "0007 - תכנון עבודה", "2001 - היעדרויות", "2002 - נוכחויות", "0050 - סטטוס ניהול זמנים" ]
+            },
+            {
+                description: "סוג מידע לתיעוד אישורי מחלה של עובדים, כולל תאריכי תחילת וסיום המחלה.",
+                correctAnswer: "2001 - היעדרויות (מחלה)",
+                options: [ "0003 - נתוני שכר", "2001 - היעדרויות", "2002 - נוכחויות", "0019 - מעקב אחר תאריכים" ]
+            },
+            {
+                description: "סוג מידע לרישום פרטי ויזות והיתרי עבודה של עובדים זרים.",
+                correctAnswer: "0017 - ויזות/היתרי עבודה",
+                options: [ "0002 - נתונים אישיים", "0016 - אלמנטי חוזה", "0017 - ויזות/היתרי עבודה", "0185 - מספרי זיהוי אישיים" ]
+            },
+            {
+                description: "סוג מידע המאפשר הגדרת לוחות זמנים עבודה אישיים, לדוגמה, עבור עובדים במשרה חלקית או גמישה.",
+                correctAnswer: "0007 - תכנית עבודה שבועית / חודשית",
+                options: [ "0007 - תכנון עבודה", "0050 - סטטוס ניהול זמנים", "0041 - תאריכי סוגי מידע", "0001 - הקצאת ארגון" ]
+            },
+            {
+                description: "סוג מידע לתיעוד מידע רפואי רלוונטי לעובד, כגון סוג דם, אלרגיות, וחיסונים.",
+                correctAnswer: "0027 - מידע רפואי",
+                options: [ "0021 - משפחה/תלויים", "0022 - השכלה", "0027 - מידע רפואי", "0028 - שירות צבאי" ]
+            },
+            {
+                description: "סוג מידע המשמש לניהול ורישום תעודות ורישיונות מקצועיים של העובד.",
+                correctAnswer: "0022 - תעודות/רישיונות", // Often a subtype of Education
+                options: [ "0022 - השכלה", "0023 - הכשרה", "0024 - הערכות", "0025 - ניסיון קודם" ]
+            },
+            {
+                description: "סוג מידע המטפל בחלוקת עלויות שכר העובד למרכזי עלות שונים בתוך הארגון.",
+                correctAnswer: "0027 - חלוקת עלויות",
+                options: [ "0008 - שכר בסיס", "0009 - פרטי בנק", "0027 - חלוקת עלויות", "0014 - תשלומים/ניכויים חוזרים" ]
+            },
+             {
+                description: "סוג מידע לרישום מספר תעודת זהות / דרכון של העובד, המשמש לזיהוי רשמי.",
+                correctAnswer: "0185 - תעודת זהות / דרכון",
+                options: [ "0002 - נתונים אישיים", "0006 - כתובות", "0105 - תקשורת", "0185 - מספרי זיהוי אישיים" ]
             }
         ];
 
@@ -521,8 +547,9 @@
          * Checks the user's answer against the correct answer.
          * Displays feedback and updates the score.
          * Disables option buttons and shows the next question button.
+         * Also logs the answer to Firestore.
          */
-        function checkAnswer() {
+        async function checkAnswer() {
             if (!selectedOption) {
                 feedbackMessage.classList.remove('hidden');
                 feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect');
@@ -533,6 +560,7 @@
             const currentQuestion = shuffledTriviaDataForRound[currentQuestionIndex]; // Use data for the current round
             const userAnswerNumber = selectedOption.textContent.trim(); // Get only the number from the selected option
             const correctAnswerNumber = extractInfotypeNumber(currentQuestion.correctAnswer); // Get only the number from the correct answer
+            const isCorrect = (userAnswerNumber === correctAnswerNumber);
 
             feedbackMessage.classList.remove('hidden');
             submitAnswerButton.classList.add('hidden');
@@ -546,20 +574,62 @@
                 }
             });
 
-            if (userAnswerNumber === correctAnswerNumber) {
+            if (isCorrect) {
                 score++;
                 feedbackMessage.classList.remove('feedback-incorrect');
                 feedbackMessage.classList.add('feedback-correct');
-                // Correct answer feedback: only the short description (e.g., "0002 - נתונים אישיים")
                 feedbackMessage.textContent = `נכון! ${currentQuestion.correctAnswer}`;
             } else {
                 selectedOption.classList.add('incorrect'); // Highlight incorrect chosen answer
                 feedbackMessage.classList.remove('feedback-correct');
                 feedbackMessage.classList.add('feedback-incorrect');
-                // Incorrect answer feedback: only the short description of the correct answer
                 feedbackMessage.innerHTML = `לא נכון! התשובה הנכונה: <span class="font-bold">${currentQuestion.correctAnswer}</span>`;
             }
+
+            // Log this specific answer to a public collection
+            await logAnswer(
+                currentQuestion.description,
+                userAnswerNumber,
+                currentQuestion.correctAnswer,
+                isCorrect,
+                window.userId // Pass the user ID for logging
+            );
         }
+
+        /**
+         * Logs an individual answer to a public Firestore collection.
+         * @param {string} questionDesc - The description of the question.
+         * @param {string} userAnswer - The infotype number the user selected.
+         * @param {string} correctAnswer - The full correct answer (number - subtype).
+         * @param {boolean} isCorrect - Whether the user's answer was correct.
+         * @param {string} userId - The ID of the user who answered.
+         */
+        async function logAnswer(questionDesc, userAnswer, correctAnswer, isCorrect, userId) {
+            // Check if Firebase is ready and if db is available
+            if (!window.isAuthReady() || !window.db) {
+                console.warn("Firebase not fully initialized or db is not available. Cannot log answer.");
+                return;
+            }
+
+            try {
+                // Public collection for all answers
+                // Using window.appId (which is customAppId) for the artifacts path
+                const answersLogCollectionRef = window.collection(window.db, `artifacts/${window.appId}/public/gameAnswersLog`);
+                
+                await window.addDoc(answersLogCollectionRef, {
+                    timestamp: new Date(),
+                    userId: userId,
+                    question: questionDesc,
+                    userAnswer: userAnswer,
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
+                console.log("Answer logged successfully!");
+            } catch (e) {
+                console.error("Error logging answer: ", e);
+            }
+        }
+
 
         /**
          * Moves to the next question or ends the game if all questions are answered.
@@ -572,11 +642,11 @@
         /**
          * Ends the game, displays the final score, and shows the end screen.
          */
-        function endGame() {
+        async function endGame() {
             gameScreen.classList.add('hidden');
             endScreen.classList.remove('hidden');
             finalScore.textContent = score;
-            totalQuestions.textContent = shuffledTriviaDataForRound.length; // Use length of questions for the round
+            totalQuestions.textContent = shuffledTriviaDataForRound.length;
         }
 
         // Event Listeners
