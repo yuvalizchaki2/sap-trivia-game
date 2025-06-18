@@ -72,6 +72,7 @@
                         document.getElementById('displayUserId').textContent = currentUserId;
                     } else {
                         // Sign in anonymously if no user is signed in.
+                        // This ensures 'request.auth != null' condition in Firestore rules is met.
                         try {
                             const anonymousUserCredential = await signInAnonymously(auth);
                             currentUserId = anonymousUserCredential.user.uid;
@@ -633,8 +634,8 @@
 
             try {
                 // Public collection for all answers
-                // Using window.appId (which is customAppId) for the artifacts path
-                const answersLogCollectionRef = window.collection(window.db, `artifacts/${window.appId}/public/gameAnswersLog`);
+                // Corrected path: added 'data' segment to ensure gameAnswersLog is a collection
+                const answersLogCollectionRef = window.collection(window.db, `artifacts/${window.appId}/public/data/gameAnswersLog`);
                 
                 await window.addDoc(answersLogCollectionRef, {
                     timestamp: new Date(),
