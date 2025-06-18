@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>׳˜׳¨׳™׳•׳•׳™׳” ׳¡׳•׳’׳™ ׳׳™׳“׳¢ SAP</title>
+    <title>טריוויה סוגי מידע SAP</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -104,18 +104,18 @@
 </head>
 <body>
     <div id="gameContainer" class="game-container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">׳˜׳¨׳™׳•׳•׳™׳” ׳¡׳•׳’׳™ ׳׳™׳“׳¢ SAP</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">טריוויה סוגי מידע SAP</h1>
 
         <!-- Start Screen -->
         <div id="startScreen" class="flex flex-col items-center gap-6">
-            <p class="text-gray-600 text-lg">׳‘׳“׳•׳§ ׳׳× ׳”׳™׳“׳¢ ׳©׳׳ ׳‘׳¡׳•׳’׳™ ׳׳™׳“׳¢ ׳•׳×׳×-׳¡׳•׳’׳™ ׳׳™׳“׳¢ ׳©׳ SAP! ׳×׳§׳‘׳ ׳×׳™׳׳•׳¨ ׳•׳×׳¦׳˜׳¨׳ ׳׳‘׳—׳•׳¨ ׳׳× ׳”׳×׳©׳•׳‘׳” ׳”׳ ׳›׳•׳ ׳” ׳׳‘׳™׳ 4 ׳׳₪׳©׳¨׳•׳™׳•׳×.</p>
-            <button id="startButton" class="btn btn-primary w-full md:w-auto">׳”׳×׳—׳ ׳׳©׳—׳§</button>
+            <p class="text-gray-600 text-lg">בדוק את הידע שלך בסוגי מידע ותת-סוגי מידע של SAP! תקבל תיאור ותצטרך לבחור את התשובה הנכונה מבין 4 אפשרויות.</p>
+            <button id="startButton" class="btn btn-primary w-full md:w-auto">התחל משחק</button>
         </div>
 
         <!-- Game Screen -->
         <div id="gameScreen" class="hidden flex-col items-center gap-6">
             <div class="w-full text-right"> <!-- Adjusted text-align for RTL -->
-                <p class="text-gray-700 text-lg font-semibold mb-2">׳×׳™׳׳•׳¨:</p>
+                <p class="text-gray-700 text-lg font-semibold mb-2">תיאור:</p>
                 <div id="descriptionDisplay" class="bg-blue-50 p-4 rounded-xl text-blue-800 text-xl font-medium shadow-inner">
                     <!-- Description will be loaded here -->
                 </div>
@@ -128,21 +128,21 @@
             <div id="feedbackMessage" class="hidden feedback-message w-full"></div>
 
             <div class="flex flex-col md:flex-row gap-4 w-full">
-                <button id="submitAnswerButton" class="btn btn-primary flex-grow">׳©׳׳— ׳×׳©׳•׳‘׳”</button>
-                <button id="nextQuestionButton" class="btn btn-secondary flex-grow hidden">׳©׳׳׳” ׳”׳‘׳׳”</button>
+                <button id="submitAnswerButton" class="btn btn-primary flex-grow">שלח תשובה</button>
+                <button id="nextQuestionButton" class="btn btn-secondary flex-grow hidden">שאלה הבאה</button>
             </div>
         </div>
 
         <!-- End Screen -->
         <div id="endScreen" class="hidden flex-col items-center gap-6">
-            <h2 class="text-2xl font-bold text-gray-800">׳”׳׳©׳—׳§ ׳ ׳’׳׳¨!</h2>
-            <p class="text-gray-600 text-xl">׳”׳©׳’׳×: <span id="finalScore" class="font-bold text-blue-600">0</span> ׳׳×׳•׳ <span id="totalQuestions" class="font-bold text-blue-600">0</span> ׳ ׳§׳•׳“׳•׳×</p>
-            <button id="playAgainButton" class="btn btn-primary w-full md:w-auto">׳©׳—׳§ ׳©׳•׳‘</button>
+            <h2 class="text-2xl font-bold text-gray-800">המשחק נגמר!</h2>
+            <p class="text-gray-600 text-xl">השגת: <span id="finalScore" class="font-bold text-blue-600">0</span> מתוך <span id="totalQuestions" class="font-bold text-blue-600">0</span> נקודות</p>
+            <button id="playAgainButton" class="btn btn-primary w-full md:w-auto">שחק שוב</button>
         </div>
     </div>
 
     <script>
-        // Helper function to extract only the number from a string like "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳"
+        // Helper function to extract only the number from a string like "0002 - נתונים אישיים"
         function extractInfotypeNumber(text) {
             const match = text.match(/^(\d+)/);
             return match ? match[1] : '';
@@ -161,113 +161,113 @@
         // Options will be displayed as just the number (e.g., "0002").
         const triviaData = [
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳˜׳₪׳ ׳‘׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳ ׳‘׳¡׳™׳¡׳™׳™׳ ׳©׳ ׳¢׳•׳‘׳“׳™׳, ׳›׳’׳•׳ ׳©׳, ׳×׳׳¨׳™׳ ׳׳™׳“׳”, ׳•׳׳¦׳‘ ׳׳©׳₪׳—׳×׳™.",
-                correctAnswer: "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
+                description: "סוג מידע המטפל בנתונים אישיים בסיסיים של עובדים, כגון שם, תאריך לידה, ומצב משפחתי.",
+                correctAnswer: "0002 - נתונים אישיים",
                 options: [
-                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
-                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
-                    "0003 - ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨",
-                    "0006 - ׳›׳×׳•׳‘׳•׳×"
+                    "0001 - הקצאת ארגון",
+                    "0002 - נתונים אישיים",
+                    "0003 - נתוני שכר",
+                    "0006 - כתובות"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳׳—׳¡׳ ׳׳× ׳₪׳¨׳˜׳™ ׳”׳›׳×׳•׳‘׳× ׳©׳ ׳”׳¢׳•׳‘׳“ (׳›׳×׳•׳‘׳× ׳׳’׳•׳¨׳™׳, ׳›׳×׳•׳‘׳× ׳׳×׳›׳×׳•׳‘׳× ׳•׳›׳•').",
-                correctAnswer: "0006 - ׳›׳×׳•׳‘׳•׳×",
+                description: "סוג מידע המאחסן את פרטי הכתובת של העובד (כתובת מגורים, כתובת לתכתובת וכו').",
+                correctAnswer: "0006 - כתובות",
                 options: [
-                    "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
-                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
-                    "0006 - ׳›׳×׳•׳‘׳•׳×",
-                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§"
+                    "0007 - תכנון עבודה",
+                    "0008 - שכר בסיס",
+                    "0006 - כתובות",
+                    "0009 - פרטי בנק"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳—׳™׳•׳ ׳™ ׳׳ ׳™׳”׳•׳ ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨ ׳¢׳‘׳•׳¨ ׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳¡׳•׳’׳™ ׳©׳›׳¨ (wagetyes) ׳•׳¡׳›׳•׳׳™׳.",
-                correctAnswer: "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
+                description: "סוג מידע חיוני לניהול נתוני שכר עבור עובד, כולל סוגי שכר (wagetyes) וסכומים.",
+                correctAnswer: "0008 - שכר בסיס",
                 options: [
-                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
-                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
-                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
-                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§"
+                    "0001 - הקצאת ארגון",
+                    "0002 - נתונים אישיים",
+                    "0008 - שכר בסיס",
+                    "0009 - פרטי בנק"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳©׳׳© ׳׳”׳§׳¦׳׳× ׳¢׳•׳‘׳“׳™׳ ׳׳™׳—׳™׳“׳” ׳׳¨׳’׳•׳ ׳™׳×, ׳׳™׳§׳•׳ ׳•׳§׳‘׳•׳¦׳× ׳¢׳•׳‘׳“׳™׳.",
-                correctAnswer: "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
+                description: "סוג מידע המשמש להקצאת עובדים ליחידה ארגונית, מיקום וקבוצת עובדים.",
+                correctAnswer: "0001 - הקצאת ארגון",
                 options: [
-                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
-                    "0004 - ׳”׳˜׳‘׳•׳×",
-                    "0005 - ׳–׳׳ ׳™ ׳¢׳‘׳•׳“׳”",
-                    "0010 - ׳ ׳™׳”׳•׳ ׳×׳₪׳§׳™׳“׳™׳"
+                    "0001 - הקצאת ארגון",
+                    "0004 - הטבות",
+                    "0005 - זמני עבודה",
+                    "0010 - ניהול תפקידים"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳˜׳₪׳ ׳‘׳₪׳¨׳˜׳™ ׳—׳©׳‘׳•׳ ׳”׳‘׳ ׳§ ׳©׳ ׳”׳¢׳•׳‘׳“ ׳׳¦׳•׳¨׳ ׳”׳¢׳‘׳¨׳× ׳©׳›׳¨ ׳•׳”׳—׳–׳¨׳™׳.",
-                correctAnswer: "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
+                description: "סוג מידע המטפל בפרטי חשבון הבנק של העובד לצורך העברת שכר והחזרים.",
+                correctAnswer: "0009 - פרטי בנק",
                 options: [
-                    "0003 - ׳ ׳×׳•׳ ׳™ ׳©׳›׳¨",
-                    "0005 - ׳–׳׳ ׳™ ׳¢׳‘׳•׳“׳”",
-                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
-                    "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳"
+                    "0003 - נתוני שכר",
+                    "0005 - זמני עבודה",
+                    "0009 - פרטי בנק",
+                    "0015 - תשלומים נוספים"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳₪׳¨׳˜ ׳׳× ׳×׳•׳›׳ ׳™׳× ׳”׳¢׳‘׳•׳“׳” ׳•׳׳•׳— ׳”׳–׳׳ ׳™׳ ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳©׳¢׳•׳× ׳¢׳‘׳•׳“׳” ׳•׳—׳׳•׳§׳× ׳׳©׳׳¨׳•׳×.",
-                correctAnswer: "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
+                description: "סוג מידע המפרט את תוכנית העבודה ולוח הזמנים של העובד, כולל שעות עבודה וחלוקת משמרות.",
+                correctAnswer: "0007 - תכנון עבודה",
                 options: [
-                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
-                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
-                    "0007 - ׳×׳›׳ ׳•׳ ׳¢׳‘׳•׳“׳”",
-                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡"
+                    "0001 - הקצאת ארגון",
+                    "0002 - נתונים אישיים",
+                    "0007 - תכנון עבודה",
+                    "0008 - שכר בסיס"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳׳₪׳©׳¨ ׳¨׳™׳©׳•׳ ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳ ׳׳¢׳•׳‘׳“׳™׳ ׳׳¢׳‘׳¨ ׳׳©׳›׳¨ ׳”׳‘׳¡׳™׳¡, ׳›׳’׳•׳ ׳‘׳•׳ ׳•׳¡׳™׳ ׳׳• ׳”׳—׳–׳¨׳™ ׳”׳•׳¦׳׳•׳×.",
-                correctAnswer: "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳",
+                description: "סוג מידע המאפשר רישום תשלומים נוספים לעובדים מעבר לשכר הבסיס, כגון בונוסים או החזרי הוצאות.",
+                correctAnswer: "0015 - תשלומים נוספים",
                 options: [
-                    "0008 - ׳©׳›׳¨ ׳‘׳¡׳™׳¡",
-                    "0009 - ׳₪׳¨׳˜׳™ ׳‘׳ ׳§",
-                    "0015 - ׳×׳©׳׳•׳׳™׳ ׳ ׳•׳¡׳₪׳™׳",
-                    "0014 - ׳ ׳™׳›׳•׳™׳™׳"
+                    "0008 - שכר בסיס",
+                    "0009 - פרטי בנק",
+                    "0015 - תשלומים נוספים",
+                    "0014 - ניכויים"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳×׳¢׳“ ׳׳× ׳”׳™׳¡׳˜׳•׳¨׳™׳™׳× ׳”׳×׳₪׳§׳™׳“׳™׳ ׳•׳”׳§׳™׳“׳•׳׳™׳ ׳©׳ ׳¢׳•׳‘׳“ ׳‘׳×׳•׳ ׳”׳׳¨׳’׳•׳.",
-                correctAnswer: "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳", // While 0001 is org assignment, it can also reflect roles/positions
+                description: "סוג מידע המתעד את היסטוריית התפקידים והקידומים של עובד בתוך הארגון.",
+                correctAnswer: "0001 - הקצאת ארגון", // While 0001 is org assignment, it can also reflect roles/positions
                 options: [
-                    "0001 - ׳”׳§׳¦׳׳× ׳׳¨׳’׳•׳",
-                    "0022 - ׳”׳©׳›׳׳”",
-                    "0023 - ׳”׳›׳©׳¨׳”",
-                    "0024 - ׳”׳¢׳¨׳›׳•׳×"
+                    "0001 - הקצאת ארגון",
+                    "0022 - השכלה",
+                    "0023 - הכשרה",
+                    "0024 - הערכות"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳›׳™׳ ׳₪׳¨׳˜׳™׳ ׳¢׳ ׳‘׳ ׳™ ׳׳©׳₪׳—׳” ׳•׳×׳׳•׳™׳™׳ ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳’׳•׳ ׳™׳׳“׳™׳ ׳•׳‘׳/׳‘׳× ׳–׳•׳’.",
-                correctAnswer: "0021 - ׳׳©׳₪׳—׳”/׳×׳׳•׳™׳™׳",
+                description: "סוג מידע המכיל פרטים על בני משפחה ותלויים של העובד, כגון ילדים ובן/בת זוג.",
+                correctAnswer: "0021 - משפחה/תלויים",
                 options: [
-                    "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳",
-                    "0006 - ׳›׳×׳•׳‘׳•׳×",
-                    "0021 - ׳׳©׳₪׳—׳”/׳×׳׳•׳™׳™׳",
-                    "0028 - ׳©׳™׳¨׳•׳× ׳¦׳‘׳׳™"
+                    "0002 - נתונים אישיים",
+                    "0006 - כתובות",
+                    "0021 - משפחה/תלויים",
+                    "0028 - שירות צבאי"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳©׳׳© ׳׳×׳™׳¢׳•׳“ ׳׳™׳•׳׳ ׳•׳™׳•׳× ׳•׳™׳›׳•׳׳•׳× ׳©׳ ׳”׳¢׳•׳‘׳“, ׳›׳•׳׳ ׳×׳׳¨׳™׳›׳™ ׳×׳•׳§׳£ ׳•׳¨׳׳•׳× ׳׳™׳•׳׳ ׳•׳×.",
-                correctAnswer: "0024 - ׳”׳¢׳¨׳›׳•׳×", // Can be used for skills/qualifications too, but 0024 often covers broader assessments
+                description: "סוג מידע המשמש לתיעוד מיומנויות ויכולות של העובד, כולל תאריכי תוקף ורמות מיומנות.",
+                correctAnswer: "0024 - הערכות", // Can be used for skills/qualifications too, but 0024 often covers broader assessments
                 options: [
-                    "0022 - ׳”׳©׳›׳׳”",
-                    "0023 - ׳”׳›׳©׳¨׳”",
-                    "0024 - ׳”׳¢׳¨׳›׳•׳×",
-                    "0025 - ׳ ׳™׳¡׳™׳•׳ ׳§׳•׳“׳"
+                    "0022 - השכלה",
+                    "0023 - הכשרה",
+                    "0024 - הערכות",
+                    "0025 - ניסיון קודם"
                 ]
             },
             {
-                description: "׳¡׳•׳’ ׳׳™׳“׳¢ ׳”׳׳×׳¢׳“ ׳₪׳¨׳˜׳™׳ ׳¢׳ ׳¢׳–׳™׳‘׳× ׳¢׳•׳‘׳“ ׳׳”׳׳¨׳’׳•׳, ׳›׳•׳׳ ׳×׳׳¨׳™׳ ׳¡׳™׳•׳ ׳”׳¢׳¡׳§׳” ׳•׳¡׳™׳‘׳× ׳”׳¢׳–׳™׳‘׳”.",
-                correctAnswer: "0019 - ׳׳¢׳§׳‘ ׳׳—׳¨ ׳×׳׳¨׳™׳›׳™׳", // Often includes separation dates
+                description: "סוג מידע המתעד פרטים על עזיבת עובד מהארגון, כולל תאריך סיום העסקה וסיבת העזיבה.",
+                correctAnswer: "0019 - מעקב אחר תאריכים", // Often includes separation dates
                 options: [
-                    "0000 - ׳₪׳¢׳•׳׳•׳×",
-                    "0019 - ׳׳¢׳§׳‘ ׳׳—׳¨ ׳×׳׳¨׳™׳›׳™׳",
-                    "0041 - ׳×׳׳¨׳™׳›׳™ ׳¡׳•׳’׳™ ׳׳™׳“׳¢",
-                    "0077 - ׳₪׳¨׳™׳©׳”"
+                    "0000 - פעולות",
+                    "0019 - מעקב אחר תאריכים",
+                    "0041 - תאריכי סוגי מידע",
+                    "0077 - פרישה"
                 ]
             }
         ];
@@ -381,7 +381,7 @@
             if (!selectedOption) {
                 feedbackMessage.classList.remove('hidden');
                 feedbackMessage.classList.remove('feedback-correct', 'feedback-incorrect');
-                feedbackMessage.textContent = '׳׳ ׳ ׳‘׳—׳¨ ׳×׳©׳•׳‘׳” ׳׳₪׳ ׳™ ׳©׳׳™׳—׳”.'; // Please select an answer before submitting.
+                feedbackMessage.textContent = 'אנא בחר תשובה לפני שליחה.'; // Please select an answer before submitting.
                 return;
             }
 
@@ -405,14 +405,14 @@
                 score++;
                 feedbackMessage.classList.remove('feedback-incorrect');
                 feedbackMessage.classList.add('feedback-correct');
-                // Correct answer feedback: only the short description (e.g., "0002 - ׳ ׳×׳•׳ ׳™׳ ׳׳™׳©׳™׳™׳")
-                feedbackMessage.textContent = `׳ ׳›׳•׳! ${currentQuestion.correctAnswer}`;
+                // Correct answer feedback: only the short description (e.g., "0002 - נתונים אישיים")
+                feedbackMessage.textContent = `נכון! ${currentQuestion.correctAnswer}`;
             } else {
                 selectedOption.classList.add('incorrect'); // Highlight incorrect chosen answer
                 feedbackMessage.classList.remove('feedback-correct');
                 feedbackMessage.classList.add('feedback-incorrect');
                 // Incorrect answer feedback: only the short description of the correct answer
-                feedbackMessage.innerHTML = `׳׳ ׳ ׳›׳•׳! ׳”׳×׳©׳•׳‘׳” ׳”׳ ׳›׳•׳ ׳”: <span class="font-bold">${currentQuestion.correctAnswer}</span>`;
+                feedbackMessage.innerHTML = `לא נכון! התשובה הנכונה: <span class="font-bold">${currentQuestion.correctAnswer}</span>`;
             }
         }
 
